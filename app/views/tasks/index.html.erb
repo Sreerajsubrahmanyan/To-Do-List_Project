@@ -1,0 +1,140 @@
+<h1 class="text-center my-4">To-Do List</h1>
+
+<div class="container">
+  <div class="d-flex justify-content-between mb-3">
+    <h2>Tasks</h2>
+    <%= link_to 'Add Task', new_task_path, class: 'btn btn-primary' %>
+  </div>
+
+<div class="card mb-3">
+  <div class="card-header text-danger">Due</div>
+  <div class="card-body">
+    <% due_tasks = @tasks.select { |task| task.due_date.present? && task.due_date < @today && !task.completed } %>
+    <% if due_tasks.any? %>
+      <ul class="list-group">
+        <% due_tasks.each do |task| %>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+              <%= task.title %>
+            </div>
+            <span class="badge bg-danger">Due: <%= task.due_date.strftime('%d %b %Y') %></span>
+            <div class="d-flex align-items-center">
+              <%= form_with(model: task, method: :patch, local: true) do |form| %>
+                <div class="form-check">
+                  <%= form.check_box :completed, checked: task.completed, onchange: 'this.form.submit();', class: "form-check-input", id: "task-#{task.id}" %>
+                  <%= form.label :completed, "Mark as Completed", class: "form-check-label ms-1", for: "task-#{task.id}" %>
+                </div>
+              <% end %>
+              <%= link_to 'Edit', edit_task_path(task), class: 'btn btn-sm btn-warning ms-2' %>
+              <%= button_to 'Delete', task, method: :delete, data: { turbo_confirm: 'Are you sure?' }, class: 'btn btn-sm btn-danger ms-2' %>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="text-muted">No due tasks 😎!</p>
+    <% end %>
+  </div>
+</div>
+
+
+
+
+<div class="card mb-3">
+  <div class="card-header text-danger">Today</div>
+  <div class="card-body">
+    <% today_tasks = @tasks.select { |task| task.due_date.present? && task.due_date == @today && !task.completed } %>
+    <% if today_tasks.any? %>
+      <ul class="list-group">
+        <% today_tasks.each do |task| %>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+              <%= task.title %>
+            </div>
+            <span class="badge bg-danger">Due: <%= task.due_date.strftime('%d %b %Y') %></span>
+            <div class="d-flex align-items-center">
+              <%= form_with(model: task, method: :patch, local: true) do |form| %>
+                <div class="form-check">
+                  <%= form.check_box :completed, checked: task.completed, onchange: 'this.form.submit();', class: "form-check-input", id: "task-#{task.id}" %>
+                  <%= form.label :completed, "Mark as Completed", class: "form-check-label ms-1", for: "task-#{task.id}" %>
+                </div>
+              <% end %>
+              <%= link_to 'Edit', edit_task_path(task), class: 'btn btn-sm btn-warning ms-2' %>
+              <%= button_to 'Delete', task, method: :delete, data: { turbo_confirm: 'Are you sure?' }, class: 'btn btn-sm btn-danger ms-2' %>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="text-muted">No tasks for today ✨!</p>
+    <% end %>
+  </div>
+</div>
+
+
+<div class="card mb-3">
+  <div class="card-header text-danger">Upcoming</div>
+  <div class="card-body">
+    <% upcoming_tasks = @tasks.select { |task| task.due_date.present? && task.due_date > @today && !task.completed } %>
+    <% if upcoming_tasks.any? %>
+      <ul class="list-group">
+        <% upcoming_tasks.each do |task| %>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+              <%= task.title %>
+            </div>
+            <span class="badge bg-danger">Due: <%= task.due_date.strftime('%d %b %Y') %></span>
+            <div class="d-flex align-items-center">
+              <%= form_with(model: task, method: :patch, local: true) do |form| %>
+                <div class="form-check">
+                  <%= form.check_box :completed, checked: task.completed, onchange: 'this.form.submit();', class: "form-check-input", id: "task-#{task.id}" %>
+                  <%= form.label :completed, "Mark as Completed", class: "form-check-label ms-1", for: "task-#{task.id}" %>
+                </div>
+              <% end %>
+              <%= link_to 'Edit', edit_task_path(task), class: 'btn btn-sm btn-warning ms-2' %>
+              <%= button_to 'Delete', task, method: :delete, data: { turbo_confirm: 'Are you sure?' }, class: 'btn btn-sm btn-danger ms-2' %>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="text-muted">No upcoming tasks 🤝!</p>
+    <% end %>
+  </div>
+</div>
+
+
+<div class="card mb-3">
+  <div class="card-header text-danger">Completed</div>
+  <div class="card-body">
+    <% completed_tasks = @tasks.select { |task| task.completed } %>
+    <% if completed_tasks.any? %>
+      <ul class="list-group">
+        <% completed_tasks.each do |task| %>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+              <span class="me-3"><%= task.title %></span>  
+              <span class="badge bg-danger">Due: <%= task.due_date.strftime('%d %b %Y') %></span>  
+            </div>
+            <% if task.completed? %>
+                <span class="badge bg-success ms-2">Completed on: <%= task.updated_at.strftime('%d %b %Y') %></span>
+            <% end %>
+            <div class="d-flex align-items-center">
+              <%= form_with(model: task, method: :patch, local: true) do |form| %>
+                <div class="form-check">
+                  <%= form.check_box :completed, checked: task.completed, onchange: 'this.form.submit();', class: "form-check-input", id: "task-#{task.id}" %>
+                  <%= form.label :completed, "Mark as Completed", class: "form-check-label ms-1", for: "task-#{task.id}" %>
+                </div>
+              <% end %>
+              <%= link_to 'Edit', edit_task_path(task), class: 'btn btn-sm btn-warning ms-2' %>
+              <%= button_to 'Delete', task, method: :delete, data: { turbo_confirm: 'Are you sure?' }, class: 'btn btn-sm btn-danger ms-2' %>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="text-muted">No completed tasks yet 😔!</p>
+    <% end %>
+  </div>
+</div>
+
